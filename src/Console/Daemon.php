@@ -10,6 +10,7 @@ use TeamSpeak3_Transport_Exception;
  * Class Daemon
  *
  * @package Hyn\Teamspeak\Daemon\Console
+ * @see http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf
  */
 class Daemon {
 
@@ -57,6 +58,7 @@ class Daemon {
      * Registers event listeners for certain signals
      */
     protected function registerServerListener() {
+        // servernotifyregister event={server|channel|textserver|textchannel|textprivate} [id={channelID}]
         $this->query->notifyRegister("server");
 
         foreach($this->readKnownEvents() as $event => $class) {
@@ -73,8 +75,6 @@ class Daemon {
      * Daemonizes the query
      */
     public function daemonize() {
-
-
         (new Message('Started daemon', 'Daemon started'))->send();
 
         while(true) {
@@ -84,7 +84,9 @@ class Daemon {
                 echo "{$e->getMessage()}\n";
                 echo "{$e->getTraceAsString()}\n\n";
                 // ends the loop on exceptions
-                break;
+                (new Message("Daemon exceptioned: {$e->getMessage()}", 'Daemon exception'))->send();
+                sleep(1);
+                return;
             }
         }
     }
