@@ -1,6 +1,6 @@
 {
-    "name": "hyn/ts3-daemon",
-    "description": "Teamspeak 3 daemonized toolset",
+    "name": "hyn/magician",
+    "description": "Teamspeak 3 intelligent automated toolbox",
     "keywords": [
         "hyn",
         "ts3",
@@ -18,6 +18,7 @@
     "require": {
         "php" : ">=5.5.9",
         "illuminate/support": "5.1.*",
+        "illuminate/eloquent": "5.1.*",
         "planetteamspeak/ts3-php-framework": "*",
         "notifymehq/notifyme": "*",
         "notifymehq/hipchat": "1.0.x-dev",
