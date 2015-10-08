@@ -22,7 +22,7 @@ return [
     // use a user friendly identifier as key
         'my-hipchat' => [
             // define the method to use for communicating
-            'type' => 'hipchat',
+            'driver' => 'hipchat',
             // REQUIRED: access token generated in Hipchat
             'token' => '',
             // REQUIRED: room to send notification to

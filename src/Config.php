@@ -5,7 +5,10 @@ use Illuminate\Support\Collection;
 class Config {
 
     protected static $instance = null;
-    protected static $config = [];
+    /**
+     * @var Collection
+     */
+    protected static $config;
 
     protected function __construct() {
         static::$config = $this->load();
@@ -59,7 +62,7 @@ class Config {
      */
     function __get($name)
     {
-        return array_key_exists($name, static::$config) ? static::$config[$name] : false;
+        return static::$config->get($name, false);
     }
 
     /**

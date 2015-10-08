@@ -8,9 +8,4 @@ interface EventContract {
      * @return mixed|void
      */
     public static function hit();
-
-    /**
-     * @param array $callable
-     */
-    public function addListener($callable = []);
 }

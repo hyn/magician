@@ -1,9 +1,10 @@
 <?php namespace Hyn\Teamspeak\Daemon\Console;
 
-use Illuminate\Console\Command;
+use Hyn\Teamspeak\Daemon\Broadcast\Message;
 use Illuminate\Support\Collection;
 use TeamSpeak3;
 use TeamSpeak3_Helper_Signal;
+use TeamSpeak3_Transport_Exception;
 
 /**
  * Class Daemon
@@ -37,9 +38,19 @@ class Daemon {
 
         $this->config = $config;
 
-        $this->query = TeamSpeak3::factory("serverquery://{$connection['username']}:{$connection['password']}@{$connection['host']}:{$connection['query_port']}/?server_port={$connection['server_port']}&blocking=0");
+        $success = false;
+        while($success === false) {
+            try {
+                $this->query = TeamSpeak3::factory("serverquery://{$connection['username']}:{$connection['password']}@{$connection['host']}:{$connection['query_port']}/?server_port={$connection['server_port']}&blocking=0");
 
-        $this->registerServerListener();
+                $this->registerServerListener();
+            } catch (TeamSpeak3_Transport_Exception $e) {
+                sleep(1);
+                continue;
+            }
+
+            $success = true;
+        }
     }
 
     /**
@@ -49,8 +60,12 @@ class Daemon {
         $this->query->notifyRegister("server");
 
         foreach($this->readKnownEvents() as $event => $class) {
-            echo "Registering {$event} subscription with class {$class}\n";
+
+            // register the event onto the Signal stack events
             TeamSpeak3_Helper_Signal::getInstance()->subscribe($event, [$class, 'hit']);
+
+            // inform the terminal about the event subscription
+            echo "Registered {$event} subscription with class {$class}\n";
         }
     }
 
@@ -58,6 +73,10 @@ class Daemon {
      * Daemonizes the query
      */
     public function daemonize() {
+
+
+        (new Message('Started daemon', 'Daemon started'))->send();
+
         while(true) {
             try {
                 $this->query->getAdapter()->wait();
@@ -85,5 +104,14 @@ class Daemon {
 
         return $events;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    function __destruct()
+    {
+        (new Message('The daemon has been forcefully stopped, the __destruct has been triggered.', 'Daemon stopped'))->send();
+    }
+
 
 }

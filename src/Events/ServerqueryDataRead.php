@@ -8,4 +8,12 @@ class ServerqueryDataRead extends AbstractEvent {
      * @var bool
      */
     protected static $debug = true;
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'data read';
+    }
 }

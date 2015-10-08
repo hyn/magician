@@ -20,7 +20,8 @@
         "illuminate/support": "5.1.*",
         "planetteamspeak/ts3-php-framework": "*",
         "notifymehq/notifyme": "*",
-        "notifymehq/hipchat": "1.0.x-dev"
+        "notifymehq/hipchat": "1.0.x-dev",
+        "laracasts/presenter": "^0.2.1"
     },
     "require-dev": {
         "phpunit/phpunit" : "4.*"

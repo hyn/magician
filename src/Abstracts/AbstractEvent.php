@@ -1,5 +1,7 @@
 <?php namespace Hyn\Teamspeak\Daemon\Abstracts;
 
+use Hyn\Teamspeak\Daemon\Config;
+use TeamSpeak3_Adapter_ServerQuery_Event;
 use Hyn\Teamspeak\Daemon\Contracts\EventContract;
 
 abstract class AbstractEvent implements EventContract {
@@ -7,7 +9,7 @@ abstract class AbstractEvent implements EventContract {
     /**
      * @var array
      */
-    protected $listeners = [];
+    public $data = [];
 
     /**
      * Indicates whether this event is used for debugging purposes
@@ -16,16 +18,18 @@ abstract class AbstractEvent implements EventContract {
     protected static $debug = false;
 
     /**
+     * @return string
+     */
+    abstract public function getName();
+
+    /**
      * When the event is triggered, we will call this method
      *
      * @return mixed|void
      */
     public static function hit() {
         if(static::$debug) return;
-        /** @var array $arguments */
-        $arguments = func_get_args();
-
-        (new static)->handle($arguments);
+        (new static)->handle(func_get_args());
     }
 
     /**
@@ -44,24 +48,42 @@ abstract class AbstractEvent implements EventContract {
         if(method_exists($this, 'post')) {
             call_user_func_array([$this, 'post'], $arguments);
         }
-
-        // we are debugging still:
-        var_dump($arguments);
-    }
-
-    /**
-     * @param array $callable
-     */
-    public function addListener($callable = []) {
-        $this->listeners[] = $callable;
     }
 
     /**
      * @param $arguments
      */
     protected function triggerListeners($arguments) {
-        foreach($this->listeners as $listener) {
-            call_user_func_array($listener, $arguments);
+        $listeners = Config::get('listeners');
+        foreach(array_get($listeners, class_basename($this), []) as $listener) {
+            $instance = new $listener();
+            $instance->catched($this);
+        }
+    }
+
+    /**
+     * @param $arguments
+     */
+    protected function pre($arguments) {
+        if(empty($arguments)) {
+            return;
+        }
+
+        if(!is_array($arguments)) {
+            $arguments = [$arguments];
+        }
+
+        if($arguments instanceof \TeamSpeak3_Adapter_ServerQuery_Reply) {
+            return;
+        }
+        foreach($arguments as $argument) {
+            if($argument instanceof TeamSpeak3_Adapter_ServerQuery_Event) {
+                var_dump($argument);
+                var_dump($argument->getData());
+                $this->data = $argument->getData();
+            } else {
+                var_dump($argument);
+            }
         }
     }
 }
