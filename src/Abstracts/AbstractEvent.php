@@ -1,17 +1,38 @@
 <?php namespace Hyn\Teamspeak\Daemon\Abstracts;
 
-abstract class AbstractEvent {
+use Hyn\Teamspeak\Daemon\Contracts\EventContract;
 
+abstract class AbstractEvent implements EventContract {
+
+    /**
+     * @var array
+     */
     protected $listeners = [];
+
+    /**
+     * Indicates whether this event is used for debugging purposes
+     * @var bool
+     */
+    protected static $debug = false;
 
     /**
      * When the event is triggered, we will call this method
      *
-     * @return mixed
+     * @return mixed|void
      */
-    public function hit() {
-
+    public static function hit() {
+        if(static::$debug) return;
+        /** @var array $arguments */
         $arguments = func_get_args();
+
+        (new static)->handle($arguments);
+    }
+
+    /**
+     * @param array $arguments
+     */
+    public function handle($arguments = []) {
+
 
         if(method_exists($this, 'pre')) {
             call_user_func_array([$this, 'pre'], $arguments);
@@ -23,6 +44,9 @@ abstract class AbstractEvent {
         if(method_exists($this, 'post')) {
             call_user_func_array([$this, 'post'], $arguments);
         }
+
+        // we are debugging still:
+        var_dump($arguments);
     }
 
     /**

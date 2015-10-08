@@ -1,5 +1,6 @@
 <?php namespace Hyn\Teamspeak\Daemon\Console;
 
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use TeamSpeak3;
 use TeamSpeak3_Helper_Signal;
@@ -48,6 +49,7 @@ class Daemon {
         $this->query->notifyRegister("server");
 
         foreach($this->readKnownEvents() as $event => $class) {
+            echo "Registering {$event} subscription with class {$class}\n";
             TeamSpeak3_Helper_Signal::getInstance()->subscribe($event, [$class, 'hit']);
         }
     }
@@ -57,7 +59,14 @@ class Daemon {
      */
     public function daemonize() {
         while(true) {
-            $this->query->getAdapter()->wait();
+            try {
+                $this->query->getAdapter()->wait();
+            } catch (\Exception $e) {
+                echo "{$e->getMessage()}\n";
+                echo "{$e->getTraceAsString()}\n\n";
+                // ends the loop on exceptions
+                break;
+            }
         }
     }
 
@@ -71,7 +80,7 @@ class Daemon {
         $events = new Collection();
 
         foreach(glob(__DIR__ . '/../Events/*.php') as $eventFile) {
-            $events->put(basename($eventFile, '.php'), sprintf('Hyn\Teamspeak\Daemon\Events\%s', basename($eventFile, '.php')));
+            $events->put(lcfirst(basename($eventFile, '.php')), sprintf('Hyn\Teamspeak\Daemon\Events\%s', basename($eventFile, '.php')));
         }
 
         return $events;

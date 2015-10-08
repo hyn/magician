@@ -3,8 +3,6 @@
 
 require_once __DIR__ .'/../vendor/autoload.php';
 
-
-
 use Hyn\Teamspeak\Daemon\Console\Daemon;
 
 /**
@@ -22,7 +20,7 @@ class Daemonizer {
     public static function run() {
         global $argv;
 
-        $config = static::config();
+        $config = Config::get();
 
         if(count($argv) > 1 && array_get($config, "teamspeak.{$argv[1]}")) {
             $connection = array_get($config, "teamspeak.{$argv[1]}");
