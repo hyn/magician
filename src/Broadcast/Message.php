@@ -27,11 +27,11 @@ class Message {
         $successes = 0;
 
         foreach($notifiers as $notifier) {
-            $service = $factory->make($notifier);
-
             if($this->sender) {
                 array_set($notifier, 'from', $this->sender);
             }
+
+            $service = $factory->make($notifier);
 
             switch(array_get($notifier, 'driver')) {
                 case 'hipchat':

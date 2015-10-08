@@ -9,6 +9,6 @@ class NotifyCliententerview extends AbstractEvent {
      */
     public function getName()
     {
-        return 'client joined';
+        return 'joined';
     }
 }
