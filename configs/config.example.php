@@ -18,23 +18,30 @@ return [
     /**
      * Notifier adapter configurations
      */
+    'notifiers' => [
     // use a user friendly identifier as key
-    'my-hipchat' => [
-        // define the method to use for communicating
-        'type' => 'hipchat',
-        // REQUIRED: access token generated in Hipchat
-        'token' => '',
-        // REQUIRED: room to send notification to
-        'room' => 0,
-        // REQUIRED: enable communication channel
-        'enabled' => false,
-        // sender name
-        'from' => 'Teamspeak',
-        // whether to notify channel participants
-        'notify' => false,
-        // message format
-        'format' => 'text',
-        // color of the message: yellow, red, gray, green, purple, random
-        'color' => 'random',
+        'my-hipchat' => [
+            // define the method to use for communicating
+            'type' => 'hipchat',
+            // REQUIRED: access token generated in Hipchat
+            'token' => '',
+            // REQUIRED: room to send notification to
+            'room' => 0,
+            // REQUIRED: enable communication channel
+            'enabled' => false,
+            // sender name
+            'from' => 'Teamspeak',
+            // whether to notify channel participants
+            'notify' => false,
+            // message format
+            'format' => 'text',
+            // color of the message: yellow, red, gray, green, purple, random
+            'color' => 'random',
+        ],
     ],
+
+    'listeners' => [
+        'NotifyCliententerview' => [
+        ]
+    ]
 ];
