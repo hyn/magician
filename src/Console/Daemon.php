@@ -59,6 +59,7 @@ class Daemon {
      */
     protected function registerServerListener() {
         // servernotifyregister event={server|channel|textserver|textchannel|textprivate} [id={channelID}]
+//        $this->query->notifyRegister("textchannel");
         $this->query->notifyRegister("server");
 
         foreach($this->readKnownEvents() as $event => $class) {
