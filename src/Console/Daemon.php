@@ -61,6 +61,11 @@ class Daemon {
         }
     }
 
+    /**
+     * Loads all known events from our Events namespace
+     *
+     * @return Collection
+     */
     protected function readKnownEvents() {
 
         $events = new Collection();
