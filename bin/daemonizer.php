@@ -15,7 +15,7 @@ use Hyn\Teamspeak\Daemon\Console\Daemon;
 class Daemonizer {
 
     /**
-     * Sets up the daemonizer
+     * Sets up the a daemonized connection
      *
      * @throws \Exception
      */
@@ -32,7 +32,7 @@ class Daemonizer {
             throw new \Exception("No connection found for Teamspeak");
         }
 
-        (new Daemon($connection, static::config()));
+        (new Daemon($connection, static::config()))->daemonize();
     }
 
     /**
