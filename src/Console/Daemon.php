@@ -25,7 +25,7 @@ class Daemon {
     protected $config = [];
 
     /**
-     * @var \TeamSpeak3_Adapter_ServerQuery
+     * @var \TeamSpeak3_Node_Server
      */
     protected $query;
 
@@ -56,11 +56,17 @@ class Daemon {
 
     /**
      * Registers event listeners for certain signals
+     *
+     * @debug: servernotifyregister event={server|channel|textserver|textchannel|textprivate} [id={channelID}]
      */
     protected function registerServerListener() {
-        // servernotifyregister event={server|channel|textserver|textchannel|textprivate} [id={channelID}]
-//        $this->query->notifyRegister("textchannel");
         $this->query->notifyRegister("server");
+
+        /** @var \TeamSpeak3_Node_Channel $channel */
+        foreach($this->query->channelList() as $channel)
+        {
+            $this->query->notifyRegister("channel", $channel->getId());
+        }
 
         foreach($this->readKnownEvents() as $event => $class) {
 
