@@ -1,5 +1,6 @@
 <?php namespace Hyn\Teamspeak\Daemon\Console;
 
+use Carbon\Carbon;
 use Hyn\Teamspeak\Daemon\Broadcast\Message;
 use Illuminate\Support\Collection;
 use TeamSpeak3;
@@ -78,7 +79,14 @@ class Daemon {
     public function daemonize() {
         (new Message('Started daemon', 'Daemon started'))->send();
 
+        $daemonizedAt = Carbon::now();
+
         while(true) {
+
+            if($daemonizedAt->diffInMinutes() > 9) {
+                $this->query->request('whoami');
+            }
+
             try {
                 $this->query->getAdapter()->wait();
             } catch (\Exception $e) {
